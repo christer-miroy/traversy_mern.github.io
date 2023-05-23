@@ -30,11 +30,23 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
       }),
     }),
+    // update user mutation
+    updateUser: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/profile`, //call updateUserProfile in backend userController.js
+        method: 'PUT',
+        body: data, //data passed in from frontend
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useRegisterMutation } =
-  userApiSlice;
+export const {
+  useLoginMutation,
+  useLogoutMutation,
+  useRegisterMutation,
+  useUpdateUserMutation,
+} = userApiSlice;
 
 // useLoginMutation = login: builder.mutation({...})
 // note: if query (ex: builder.query), use useLoginQuery

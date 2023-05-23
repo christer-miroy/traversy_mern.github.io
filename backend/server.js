@@ -1,3 +1,4 @@
+import path from 'path';
 import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -19,9 +20,22 @@ app.use(express.json()); //parse raw json data (placed before routing middleware
 app.use(express.urlencoded({ extended: true })); //send form data (placed before routing middleware)
 app.use(cookieParser()); //protect routes
 app.use('/api/users', userRoutes);
-app.get('/', (req, res) => {
-  res.send('Server is ready');
-});
+
+if (process.env.NODE_ENV == 'production') {
+  const __dirname = path.resolve();
+  app.use(express.static(path.join(__dirname, 'frontend/dist')));
+
+  // any route that is not 'api/users' load frontend/dist/index.html
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html')),
+  );
+} else {
+  //no need to load frontend/dist/index.html
+  app.get('/', (req, res) => {
+    res.send('Server is ready');
+  });
+}
+
 app.use(notFound);
 app.use(errorHandler);
 
